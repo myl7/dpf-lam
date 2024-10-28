@@ -25,18 +25,19 @@ entry_size = 1
 
 # The actual table (replicated on 2 non-colluding servers)
 table = torch.randint(2**31, (table_size, entry_size)).int()
-table[42,:] = 42
+table[42, :] = 42
+
 
 def server(k):
-
     # Server initializes DPF w/ table
     dpf_ = dpf.DPF()
     dpf_.eval_init(table)
 
-    # Server evaluates DPF on table    
+    # Server evaluates DPF on table
     return dpf_.eval_gpu([k])
 
-def client():    
+
+def client():
     secret_indx = 42
 
     # Generate two keys that represents the secret indx
@@ -44,16 +45,17 @@ def client():
     k1, k2 = dpf_.gen(secret_indx, table_size)
 
     # Send one key to each server to evaluate.
-    # 
+    #
     # Assuming that these two servers do not collude,
     # the servers learn _nothing_ about secret_indx.
     a = server(k1).item()
     b = server(k2).item()
 
-    rec = a-b
-    
-    print(a, b, rec)
-    assert(rec == 42)
+    rec = a - b
 
-if __name__=="__main__":
+    print(a, b, rec)
+    assert rec == 42
+
+
+if __name__ == "__main__":
     client()
