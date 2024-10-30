@@ -1,12 +1,9 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates. All Rights Reserved.
-import sys
 import os
-import copy
 import time
 import torch
 import dpf_cpp
 import random
-import uuid
 import numpy as np
 import torch.nn.functional as F
 
@@ -59,9 +56,11 @@ class DPF(object):
             self.PRF_AES128: "AES128",
         }[self.prf_method]
 
-    def gen(self, k, n):
-        # TODO: Please replace with secure 128-bit RNG
-        seed = os.urandom(128)
+    def gen(self, k, n, seed: bytes | None = None):
+        if seed is None:
+            seed = os.urandom(128)
+        if len(seed) != 128:
+            raise Exception(f"seed length ({len(seed)}) must be 128")
 
         if n & (n - 1) != 0:
             raise Exception("Table num entries (%d) must be a power of two" % (n))
@@ -363,15 +362,3 @@ def test_cpu_dpf_perf(N=2048, batch=dpf_cpp.BATCH_SIZE, entrysize=16, prf=DPF.DE
     dpfs_per_sec = batch * reps / elapsed
     keysize = np.prod(k1s[0].shape) * 4
     print("%s Key Size: %d bytes, Perf: %d dpfs/sec" % (dpf, keysize, dpfs_per_sec))
-
-
-if __name__ == "__main__":
-    random.seed(time.time())
-    test_cpu_dpf()
-    test_cpu_dpf_one_hot()
-    test_gpu_dpf()
-    test_gpu_dpf_nopad()
-    test_gpu_dpf_sweep()
-    test_gpu_dpf_perf()
-
-    # test_cpu_dpf_perf() # commented out because it is slow

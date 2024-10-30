@@ -1,11 +1,13 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates. All Rights Reserved.
 
-from setuptools import setup, Extension
-from torch.utils.cpp_extension import BuildExtension, CUDAExtension
+from setuptools import setup, find_packages
+from torch.utils.cpp_extension import CUDAExtension
 from torch.utils import cpp_extension
 
 setup(
-    name="dpf_cpp",
+    name="dpf-lam",
+    version="0.1.0",
+    packages=find_packages(),
     ext_modules=[
         CUDAExtension(
             "dpf_cpp",
