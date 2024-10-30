@@ -1,0 +1,6 @@
+-Ivenv/lib/python3.12/site-packages/torch/include
+-Ivenv/lib/python3.12/site-packages/torch/include/torch/csrc/api/include
+-Ivenv/lib/python3.12/site-packages/torch/include/TH
+-Ivenv/lib/python3.12/site-packages/torch/include/THC
+-I/usr/include/python3.12
+--cuda-gpu-arch=sm_86
